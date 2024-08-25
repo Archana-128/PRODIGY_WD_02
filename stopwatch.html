@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <link rel="icon" href="https://play-lh.googleusercontent.com/0ybd6H4TKpK2wZ7Qvas1b8hReEirGo37YMtzbfLFt0z4FSIfKEuxL3-ejrGm2z3NReR3">
+<style>
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif;
+    background-color: #f0f0f0;
+    background-image: url("https://cdn.mos.cms.futurecdn.net/VgGxJABA8DcfAMpPPwdv6a.jpg");
+    text-align: center;
+    color: black; 
+    font-size: 2em; 
+}
+.stopwatch {
+    text-align: center;
+    padding: 20px;
+    color: black;
+    font-weight: bold;
+    }
+.display {
+    font-size: 10rem;
+    margin-bottom: 20px;
+}
+.controls button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: lightcyan;
+}
+.laps ul {
+    list-style-type: none;
+    padding: 0;
+}
+.laps li {
+    font-size: 2em;
+    margin: 5px 0;
+}
+</style>
+</head>
+<body>
+    <div class="stopwatch">
+        <div class="display" id="timeDisplay">00:00:00</div>
+        <div class="controls">
+            <button id="startButton">Start</button>
+            <button id="pauseButton">Pause</button>
+            <button id="resetButton">Reset</button>
+            <button id="lapButton">Lap</button>
+        </div>
+        <div class="laps">
+            <ul id="lapList"></ul>
+        </div>
+    </div>
+    <script>
+let timerInterval;
+let startTime;
+let elapsedTime = 0;
+let isRunning = false;
+let lapCount = 0;
+
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+function updateDisplay() {
+    document.getElementById('timeDisplay').textContent = formatTime(elapsedTime);
+}
+
+function startStopwatch() {
+    if (!isRunning) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+            elapsedTime = Date.now() - startTime;
+            updateDisplay();
+        }, 1000);
+        isRunning = true;
+    }
+}
+
+function pauseStopwatch() {
+    if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+    }
+}
+
+function resetStopwatch() {
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    updateDisplay();
+    document.getElementById('lapList').innerHTML = '';
+    isRunning = false;
+}
+
+function recordLap() {
+    if (isRunning) {
+        lapCount++;
+        const lapTime = formatTime(elapsedTime);
+        const lapList = document.getElementById('lapList');
+        const lapItem = document.createElement('li');
+        lapItem.textContent = `Lap ${lapCount}: ${lapTime}`;
+        lapList.appendChild(lapItem);
+    }
+}
+
+document.getElementById('startButton').addEventListener('click', startStopwatch);
+document.getElementById('pauseButton').addEventListener('click', pauseStopwatch);
+document.getElementById('resetButton').addEventListener('click', resetStopwatch);
+document.getElementById('lapButton').addEventListener('click', recordLap);
+
+    </script>
+</body>
+</html>
